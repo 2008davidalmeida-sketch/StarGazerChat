@@ -9,6 +9,7 @@ import { Router } from 'express';
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { validateAuth } from '../utils/validateAuth.js';
 
 const router = Router();
 
@@ -16,18 +17,11 @@ router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).json({ message: 'Please enter all fields' });
-        }
-
-        if (username.length > 15) {
-            return res.status(400).json({ message: 'Username must be less than 15 characters' });
-        }
+        const error = validateAuth(username, password);
+        if (error) return res.status(400).json({ message: error });
 
         const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Username already exists' });
-        }
+        if (existingUser) return res.status(400).json({ message: 'Username already exists' });
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -49,17 +43,17 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+       
+        const error = validateAuth(username, password);
+        if (error) return res.status(400).json({ message: error });
+       
         const user = await User.findOne({ username });
 
-        if (!user) {
-            return res.status(400).json({ message: 'User does not exist'});
-        }
-
+        if (!user) return res.status(400).json({ message: 'User does not exist'});
+    
         const isMatch = await bcrypt.compare(password, user.password);
 
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Incorrect password'});
-        }
+        if (!isMatch) return res.status(400).json({ message: 'Incorrect password'});
 
         const token = jwt.sign(
             { id: user._id },

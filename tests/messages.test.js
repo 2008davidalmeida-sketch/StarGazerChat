@@ -7,7 +7,6 @@ After the test is completed, it disconnects from MongoDB.
 
 import { test, after } from 'node:test';
 import assert from 'node:assert';
-import Message from '../models/message.js';
 import mongoose from 'mongoose';
 import 'dotenv/config'
 
@@ -16,11 +15,12 @@ await mongoose.connect(process.env.MONGO_URI);
 const loginResponse = await fetch('http://localhost:3000/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'testuser_messages', password: '123456' })
+    body: JSON.stringify({ username: 'testuser_msg', password: '123456' })
 });
-const { token } = await loginResponse.json();
+const data = await loginResponse.json();
+const { token } = data;
 
-test('send a new message', async () => {
+test('fetch messages', async () => {
     const response = await fetch('http://localhost:3000/messages/69ca6ae99fe5ddf178e3b0df', {
         method: 'GET',
         headers: {
