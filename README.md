@@ -2,11 +2,11 @@
 
 TODO:
 
+Build remaining routes and tests (see routes list below)
 Add CORS when connecting frontend
 Move port to environment variable (PORT=3000 in .env)
 Deploy backend to Railway, Render or Fly.io
 Document all API endpoints
-Build remaining routes and tests (see routes list below)
 
 
 
