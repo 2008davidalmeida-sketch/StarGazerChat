@@ -11,8 +11,10 @@ and server errors.
 import express from 'express';
 import Room from '../models/room.js';
 import User from '../models/user.js';
+import Message from '../models/message.js';
 import { authMiddleware } from '../middleware/middleware.js';
 import mongoose from 'mongoose';
+
 
 const router = express.Router();
 
@@ -57,6 +59,25 @@ router.post('/', authMiddleware, async (req, res) => {
 
         const populated = await room.populate('members', '-password');
         res.status(201).json(populated);
+
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.delete('/:roomId', authMiddleware, async (req, res) => {
+    try {
+        const room = await Room.findById(req.params.roomId);
+
+        if (!room) return res.status(404).json({ message: 'Room not found' });
+
+        const isMember = room.members.some(m => m.toString() === req.user.id);
+        if (!isMember) return res.status(403).json({ message: 'Not a member of this room' });
+
+        await Room.deleteOne({ _id: room._id });
+        await Message.deleteMany({ room: room._id });
+
+        res.json({ message: 'Room deleted' });
 
     } catch (err) {
         res.status(500).json({ message: 'Server error' });

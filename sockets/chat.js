@@ -43,7 +43,7 @@ export function initSocket(io) {
                 const message = new Message({ sender: socket.user.id, content, room: roomId });
                 await message.save();
                 
-                io.to(roomId).emit('newMessage', { senderId: socket.user.id, content });
+                io.to(roomId).emit('newMessage', message);
 
             } catch (error) {
                 console.error('Error sending message:', error);
