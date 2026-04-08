@@ -1,6 +1,8 @@
 /*
 This file defines the routes for fetching users in the chat application.
-It uses an authentication middleware to ensure that only authenticated users can access the users.
+It uses an authentication middleware to ensure that only authenticated users can access the users.  
+It also handles searching for users by username and excluding the authenticated user from the results.
+It also handles error cases such as missing query parameters and server errors.
 */
 
 import express from 'express';

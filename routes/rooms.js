@@ -2,7 +2,10 @@
 This file contains the routes for managing chat rooms.
 It handles fetching all rooms the user is a member of and creating new rooms.
 It uses an authentication middleware to ensure that only authenticated users can
-access the rooms.
+access the rooms. It also handles creating new rooms and populating them with
+user data. It prevents users from creating rooms with themselves and prevents
+creating duplicate rooms. It also handles error cases such as user not found
+and server errors.
 */
 
 import express from 'express';
