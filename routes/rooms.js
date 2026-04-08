@@ -12,12 +12,13 @@ import express from 'express';
 import Room from '../models/room.js';
 import User from '../models/user.js';
 import { authMiddleware } from '../middleware/middleware.js';
+import mongoose from 'mongoose';
 
 const router = express.Router();
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const rooms = await Room.find({ members: req.user.id })
+        const rooms = await Room.find({ members: new mongoose.Types.ObjectId(req.user.id) })
             .populate('members', '-password');
 
         res.json(rooms);
@@ -25,7 +26,6 @@ router.get('/', authMiddleware, async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
-
 
 router.post('/', authMiddleware, async (req, res) => {
     const { targetUsername } = req.body;
