@@ -9,6 +9,8 @@ import express from 'express';
 import mongoose from 'mongoose';  
 import authRoutes from './routes/auth.js';
 import messageRoutes from './routes/messages.js';
+import userRoutes from './routes/users.js';
+import roomRoutes from './routes/rooms.js';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import { initSocket } from './sockets/chat.js';
@@ -30,6 +32,8 @@ app.use(cors({origin: 'http://localhost:5173'}));
 app.use(express.json());
 app.use('/auth', authRoutes);  
 app.use('/messages', messageRoutes);  
+app.use('/users', userRoutes);
+app.use('/rooms', roomRoutes);
 
 initSocket(io);
 server.listen(3000, () => console.log('Server running'));
