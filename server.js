@@ -36,5 +36,5 @@ app.use('/users', userRoutes);
 app.use('/rooms', roomRoutes);
 
 initSocket(io);
-server.listen(3000, () => console.log('Server running'));
+server.listen(process.env.PORT || 3000, () => console.log('Server running'));
 
