@@ -38,4 +38,32 @@ router.get('/me', authMiddleware, async (req, res) => {
     }
 });
 
+router.patch('/me', authMiddleware, async (req, res) => {
+    try {
+        const { username, bio } = req.body;
+
+        if (username) {
+            const existing = await User.findOne({ username });
+            if (existing && existing._id.toString() !== req.user.id) {
+                return res.status(400).json({ message: 'Username already taken' });
+            }
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        if (username) user.username = username;
+        if (bio !== undefined) user.bio = bio;
+
+        await user.save();
+
+        const { password, ...updatedUser } = user.toObject();
+        res.json(updatedUser);
+
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 export default router;
